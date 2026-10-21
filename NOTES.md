@@ -16,17 +16,17 @@ Reconstructed from the discussion in [issue #116](https://github.com/dominictarr
 
 | Date | Event |
 |---|---|
-| ~Aug 2018 | `right9ctrl` emails Dominic Tarr offering to maintain `event-stream`; Tarr grants them **npm publish rights**. ("he emailed me and said he wanted to maintain the module, so I gave it to him" — maintainer's response in the tracking issue.) |
+| Before Sept 2018 (exact date not public) | `right9ctrl` emails Dominic Tarr offering to maintain `event-stream`; Tarr grants them **npm publish rights**. ("he emailed me and said he wanted to maintain the module, so I gave it to him" — maintainer's response in the tracking issue.) |
 | 2018-09-05 | `hugeglass/flatmap-stream` GitHub repo created (single "First commit"). `right9ctrl` begins committing to `event-stream` (v3.3.5). |
 | 2018-09-09 08:07 UTC | Commit [`e3163361`](https://github.com/dominictarr/event-stream/commit/e3163361fed01384c986b9b4c18feb1fc42b8285) ("add flat map") by `right9ctrl` adds `flatmap-stream` as a dependency of `event-stream`. |
 | 2018-09-09 08:17 UTC | Ten minutes later, `right9ctrl` bumps the version and publishes **`event-stream@3.3.6`**, which depends on the malicious **`flatmap-stream@0.1.1`**. |
-| 2018-09-16 | `right9ctrl` rewrites flatmap natively, drops the `flatmap-stream` dependency, and moves the repo toward 4.x; `flatmap-stream@0.1.2` (injection removed) is published. Crucially, **`3.3.6` is never yanked**, so everyone pinned to the 3.x line keeps pulling the backdoored dependency. |
+| Mid-Sept 2018 | `right9ctrl` rewrites flatmap natively (commits of 2018-09-16/20), drops the `flatmap-stream` dependency, and moves the repo to 4.x. `flatmap-stream@0.1.2`, with the injection removed, follows on npm (the repo's "latest version removes the injection", per the tracking issue). Crucially, **`3.3.6` is never yanked**, so everyone pinned to the 3.x line keeps pulling the backdoored dependency. |
 | Sept–Nov 2018 | `event-stream@3.3.6` spreads transitively across the ecosystem. Documented example from the discussion: `npm-run-all@4.1.3` → `ps-tree@1.1.0` → `event-stream@3.3.6` → `flatmap-stream`. |
 | 2018-11-19 | [**Issue #115**](https://github.com/dominictarr/event-stream/issues/115) opened by NewEraCracker: "Backdoored dependency? flatmap-stream-0.1.1 and flatmap-stream-0.1.2" — first public flag of the suspicious dependency. |
 | 2018-11-21 | [**Issue #116**](https://github.com/dominictarr/event-stream/issues/116) opened by FallingSnow ("I don't know what to say.") with a cleaned-up breakdown of the code found only in the minified `flatmap-stream@0.1.1`: hex-encoded `require` calls, an AES-encrypted payload disguised as `./test/data`, and `process` access. Analysis continues in-thread. |
 | 2018-11-22 | Maintainer Dominic Tarr responds — the key comment of the thread: he had been emailed by `right9ctrl`, gave him the module, no longer uses it, and *no longer has publish rights on npm*. `npm owner ls event-stream` confirmed `right9ctrl` was the sole owner. |
 | 2018-11-23 | Community triage: reachability checks (`npm ls event-stream flatmap-stream`), credential-rotation advice, and contact with npm support. |
-| 2018-11-26 | **Target identified** by @maths22: the payload activates only for Copay-related packages. Issue #116 body updated with "Am I affected? / What does it do / What can I do" guidance (downgrade to `event-stream@3.3.4` or upgrade to 4.x). npm removes the malicious versions from the registry; GitHub advisory `GHSA-mh6f-8j2x-4483` published the same day. |
+| 2018-11-26 | **Target identified** by @maths22: the payload activates only for Copay-related packages. Issue #116 body updated with "Am I affected? / What does it do / What can I do" guidance (downgrade to `event-stream@3.3.4` or upgrade to 4.x). By this point npm had removed (yanked) the malicious versions from the registry, and GitHub advisory `GHSA-mh6f-8j2x-4483` is published this same day. |
 
 ## The payload (what it actually did)
 
